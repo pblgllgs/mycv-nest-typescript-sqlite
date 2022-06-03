@@ -4,9 +4,20 @@ POST http://localhost:3000/auth/signup
 content-type: application/json
 
 {
-    "email": "123@gmail.com",
+    "email": "hash@gmail.com",
     "password": "123qwe123"
 }
+
+### login
+POST http://localhost:3000/auth/signin
+content-type: application/json
+
+{
+    "email": "hash@gmail.com",
+    "password": "123qwe123"
+}
+
+
 
 ### find all users
 GET http://localhost:3000/auth/all
