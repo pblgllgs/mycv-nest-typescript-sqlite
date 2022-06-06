@@ -12,43 +12,40 @@ import {
 } from '@nestjs/common';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { AuthService } from './auth.service';
-import { CreateUserDto, UpdateUserDto, UserDto, UserFullDto } from './dtos';
+import { CreateUserDto, UpdateUserDto, UserDto } from './dtos';
 import { UsersService } from './users.service';
 
+@Serialize(UserDto)
 @Controller('auth')
 export class UsersController {
 
     constructor(private usersService: UsersService, private authService:AuthService) { }
 
-    @Serialize(UserDto)
     @Post('/signup')
     createUser(@Body() body: CreateUserDto) {
         return this.authService.register(body.email, body.password);
     }
 
-    @Serialize(UserDto)
     @Post('/signin')
     signin(@Body() body: CreateUserDto) {
         return this.authService.login(body.email, body.password);
     }
 
-    @Serialize(UserDto)
     @Get()
     findAllUsers(@Query('email') email: string) {
         return this.usersService.find(email);
     }
 
-    @Serialize(UserDto)
     @Get('/all')
     findAll() {
         return this.usersService.findAll();
     }
 
-    @Serialize(UserFullDto)
-    @Get('/admin/all')
-    findAllAdmin() {
-        return this.usersService.findAll();
-    }
+    // @Serialize(UserFullDto)
+    // @Get('/admin/all')
+    // findAllAdmin() {
+    //     return this.usersService.findAll();
+    // }
 
     @Serialize(UserDto)
     @Get('/:id')
@@ -61,16 +58,16 @@ export class UsersController {
         return user;
     }
 
-    @Serialize(UserFullDto)
-    @Get('/admin/:id')
-    async findUserAdmin(@Param('id') id: string) {
-        console.log('handler is running');
-        const user = await this.usersService.findOne(parseInt(id));
-        if (!user) {
-            throw new NotFoundException('User not found');
-        }
-        return user;
-    }
+    // @Serialize(UserFullDto)
+    // @Get('/admin/:id')
+    // async findUserAdmin(@Param('id') id: string) {
+    //     console.log('handler is running');
+    //     const user = await this.usersService.findOne(parseInt(id));
+    //     if (!user) {
+    //         throw new NotFoundException('User not found');
+    //     }
+    //     return user;
+    // }
 
     @Serialize(UserDto)
     @Patch(':id')
