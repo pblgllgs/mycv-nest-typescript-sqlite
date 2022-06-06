@@ -8,12 +8,16 @@ import {
     Patch,
     Post,
     Query,
-    UseInterceptors,
+    Session,
+    UseGuards,
 } from '@nestjs/common';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { AuthService } from './auth.service';
 import { CreateUserDto, UpdateUserDto, UserDto } from './dtos';
 import { UsersService } from './users.service';
+import { User } from './user.entity';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Serialize(UserDto)
 @Controller('auth')
@@ -21,14 +25,34 @@ export class UsersController {
 
     constructor(private usersService: UsersService, private authService:AuthService) { }
 
+    // @Get('/whoami')
+    // whoami(@Session() session:any) {
+    //     return this.usersService.findOne(session.userId);
+    // }
+
+    @UseGuards(AuthGuard)
+    @Get('/whoami')
+    whoami(@CurrentUser() user:User) {
+        return user;
+    }
+
+    @Post('/signout')
+    sugnout(@Session() session) {
+        session.userId = null;
+    }
+
     @Post('/signup')
-    createUser(@Body() body: CreateUserDto) {
-        return this.authService.register(body.email, body.password);
+    async createUser(@Body() body: CreateUserDto, @Session() session) {
+        const user = await this.authService.register(body.email, body.password);
+        session.userId = user.id;
+        return user;
     }
 
     @Post('/signin')
-    signin(@Body() body: CreateUserDto) {
-        return this.authService.login(body.email, body.password);
+    async signin(@Body() body: CreateUserDto, @Session() session) {
+        const user = await this.authService.login(body.email, body.password);
+        session.userId = user.id;
+        return user;
     }
 
     @Get()
@@ -41,13 +65,6 @@ export class UsersController {
         return this.usersService.findAll();
     }
 
-    // @Serialize(UserFullDto)
-    // @Get('/admin/all')
-    // findAllAdmin() {
-    //     return this.usersService.findAll();
-    // }
-
-    @Serialize(UserDto)
     @Get('/:id')
     async findUser(@Param('id') id: string) {
         console.log('handler is running');
@@ -56,7 +73,27 @@ export class UsersController {
             throw new NotFoundException('User not found');
         }
         return user;
+    }  
+
+    @Patch(':id')
+    updateUser(@Param('id') id: string, @Body() user: UpdateUserDto) {
+        return this.usersService.updateUser(parseInt(id), user);
     }
+
+    @Delete(':id')
+    remoneUser(@Param('id') id: string) {
+        return this.usersService.remove(parseInt(id));
+    }
+
+    // @Get('/colors/:color')
+    // setColor(@Param('color') color: string, @Session() session:any){
+    //     session.color = color;
+    // }
+
+    // @Get('/colors')
+    // getColor(@Session() session:any){
+    //     return session.color;
+    // }
 
     // @Serialize(UserFullDto)
     // @Get('/admin/:id')
@@ -69,16 +106,10 @@ export class UsersController {
     //     return user;
     // }
 
-    @Serialize(UserDto)
-    @Patch(':id')
-    updateUser(@Param('id') id: string, @Body() user: UpdateUserDto) {
-        return this.usersService.updateUser(parseInt(id), user);
-    }
-
-    @Serialize(UserDto)
-    @Delete(':id')
-    remoneUser(@Param('id') id: string) {
-        return this.usersService.remove(parseInt(id));
-    }
+    // @Serialize(UserFullDto)
+    // @Get('/admin/all')
+    // findAllAdmin() {
+    //     return this.usersService.findAll();
+    // }
 
 }

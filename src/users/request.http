@@ -4,8 +4,8 @@ POST http://localhost:3000/auth/signup
 content-type: application/json
 
 {
-    "email": "hash@gmail.com",
-    "password": "123qwe123"
+    "email": "test@test.com",
+    "password": "123123"
 }
 
 ### login
@@ -13,9 +13,15 @@ POST http://localhost:3000/auth/signin
 content-type: application/json
 
 {
-    "email": "hash@gmail.com",
-    "password": "123qwe123"
+    "email": "test@test.com",
+    "password": "123123"
 }
+
+### get actual user in the cookie-session
+GET http://localhost:3000/auth/whoami
+
+### signout
+POST http://localhost:3000/auth/signout
 
 
 
@@ -48,3 +54,9 @@ content-type: application/json
 
 ### delete user
 DELETE http://localhost:3000/auth/10
+
+# ### set color
+# GET http://localhost:3000/auth/colors/blue
+
+# ### get color
+# GET http://localhost:3000/auth/colors
