@@ -8,9 +8,21 @@ describe("AuthService", () => {
     let fakeUsersService: Partial<UsersService>;
 
     beforeEach(async () => {
+        const users: User[] = [];
         fakeUsersService = {
-            find: () => Promise.resolve([]),
-            create: (email: string, password: string) => Promise.resolve({ id: 1, email, password } as User)
+            find: (email: string) => {
+                const filterUsers = users.filter(user => user.email === email);
+                return Promise.resolve(filterUsers);
+            },
+            create: (email: string, password: string) => {
+                const user = {
+                    id: Math.floor(Math.random() * 999999),
+                    email,
+                    password,
+                } as User
+                users.push(user);
+                return Promise.resolve(user);
+            }
         }
         const module = await Test.createTestingModule({
             providers: [
@@ -35,19 +47,36 @@ describe("AuthService", () => {
         expect(hash).toBeDefined();
     });
     it('lanza un error si el email esta en uso por otro usuario', async () => {
-        fakeUsersService.find = () => Promise.resolve(
-            [
-                {
-                    id: 1,
-                    email: 'a',
-                    password: '1'
-                } as User
-            ]
-        );
+        await service.register('asdf@asdf.com', 'asdf');
         try {
             await service.register('asdf@asdf.com', 'asdf');
         } catch (error) {
             expect(error.message).toEqual('Email in use');
         }
     })
+
+    it('lanza un error si el login falla', async () => {
+        try {
+            await service.login('asd@asd.com', 'asdf');
+        } catch (error) {
+            expect(error.message).toEqual('User not found');
+        }
+    })
+
+    it('lanza un error si el email dado es invalido ', async () => {
+        await service.register('asdf@asdf.com', 'asdf');
+        try {
+            await service.login('asdf@asdf.com', 'password')
+        } catch (error) {
+            expect(error.message).toEqual('Invalid password');
+        }
+    })
+
+    it('crea un usuario y lo devuelve', async () => {
+        await service.register('asdf@asdf.com', 'mypassword');
+        const user = await service.login('asdf@asdf.com', 'mypassword');
+        expect(user).toBeDefined();
+    })
+
+
 });
