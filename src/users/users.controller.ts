@@ -37,7 +37,7 @@ export class UsersController {
     }
 
     @Post('/signout')
-    sugnout(@Session() session) {
+    signout(@Session() session) {
         session.userId = null;
     }
 
