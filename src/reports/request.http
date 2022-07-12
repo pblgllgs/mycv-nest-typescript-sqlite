@@ -5,11 +5,19 @@ POST http://localhost:3000/reports
 content-type: application/json
 
 {
-    "make":"toyota",
-    "model":"corolla",
-    "year":1995,
-    "mileage":250800,
+    "make":"chevy",
+    "model":"test",
+    "year":2010,
+    "mileage":1000,
     "lng":0,
     "lat":0,
-    "price": 10000
+    "price": 30000
+}
+
+### approve a report
+PATCH http://localhost:3000/reports/7
+content-type: application/json
+
+{
+    "approved": true
 }
