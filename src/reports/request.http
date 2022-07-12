@@ -15,9 +15,13 @@ content-type: application/json
 }
 
 ### approve a report
-PATCH http://localhost:3000/reports/7
+PATCH http://localhost:3000/reports/8
 content-type: application/json
 
 {
     "approved": true
 }
+
+
+### Get estimates por a vehicle
+GET http://localhost:3000/reports?make=chevy&model=test&lng=0&lat=0&mileage=1000&year=2010
