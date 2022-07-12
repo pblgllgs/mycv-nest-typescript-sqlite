@@ -1,21 +1,19 @@
-
-
 ### create a new report
 POST http://localhost:3000/reports
 content-type: application/json
 
 {
-    "make":"chevy",
-    "model":"test",
-    "year":2010,
-    "mileage":1000,
-    "lng":0,
-    "lat":0,
-    "price": 30000
+    "make":"ford",
+    "model":"mustang",
+    "year":1982,
+    "mileage":50000,
+    "lng":45,
+    "lat":45,
+    "price": 20000
 }
 
 ### approve a report
-PATCH http://localhost:3000/reports/8
+PATCH http://localhost:3000/reports/9
 content-type: application/json
 
 {
@@ -24,4 +22,4 @@ content-type: application/json
 
 
 ### Get estimates por a vehicle
-GET http://localhost:3000/reports?make=chevy&model=test&lng=0&lat=0&mileage=1000&year=2010
+GET http://localhost:3000/reports?make=ford&model=mustang&lng=45&lat=45&mileage=35000&year=1982
