@@ -10,25 +10,26 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
 const cookieSession = require('cookie-session');
-
-
+import dbconfig from '../src/db/ormconfig'
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        return {
-          type: 'sqlite',
-          database: configService.get<string>('DB_NAME'),
-          synchronize: true,
-          entities: [User, Report],
-        }
-      }
-    }),
+    TypeOrmModule.forRoot(),
+
+    // TypeOrmModule.forRootAsync({
+    //   inject: [ConfigService],
+    //   useFactory: (configService: ConfigService) => {
+    //     return {
+    //       type: 'sqlite',
+    //       database: configService.get<string>('DB_NAME'),
+    //       synchronize: true,
+    //       entities: [User, Report],
+    //     }
+    //   }
+    // }),
     ReportsModule,
     UsersModule
   ],
